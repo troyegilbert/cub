@@ -579,7 +579,7 @@ template&lt;typename BlockPrefixCallbackOp &gt; </div>
 <div class="line">        <span class="comment">// Collectively compute the block-wide exclusive prefix sum</span></div>
 <div class="line">        <a class="code" href="classcub_1_1_block_scan.html#a5133f76e261ce0b33d381e8be747966c" title="Collective constructor using a private static allocation of shared memory as temporary storage...">BlockScan</a>(temp_storage).ExclusiveSum(</div>
 <div class="line">            thread_data, thread_data, prefix_op);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Store scanned items to output segment</span></div>
 <div class="line">        d_data[block_offset] = thread_data;</div>
@@ -872,17 +872,17 @@ template&lt;int ITEMS_PER_THREAD, typename BlockPrefixCallbackOp &gt; </div>
 <div class="line">        <span class="comment">// Load a segment of consecutive items that are blocked across threads</span></div>
 <div class="line">        <span class="keywordtype">int</span> thread_data[4];</div>
 <div class="line">        BlockLoad(temp_storage.load).Load(d_data + block_offset, thread_data);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Collectively compute the block-wide exclusive prefix sum</span></div>
 <div class="line">        <span class="keywordtype">int</span> block_aggregate;</div>
 <div class="line">        <a class="code" href="classcub_1_1_block_scan.html#a5133f76e261ce0b33d381e8be747966c" title="Collective constructor using a private static allocation of shared memory as temporary storage...">BlockScan</a>(temp_storage.scan).ExclusiveSum(</div>
 <div class="line">            thread_data, thread_data, prefix_op);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Store scanned items to output segment</span></div>
 <div class="line">        BlockStore(temp_storage.store).Store(d_data + block_offset, thread_data);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line">    }</div>
 </div><!-- fragment --> </dd></dl>
 <dl class="section user"><dt></dt><dd>Suppose the input <code>d_data</code> is <code>1, 1, 1, 1, 1, 1, 1, 1, ...</code>. The corresponding output for the first segment will be <code>0, 1, 2, 3, ..., 510, 511</code>. The output for the second segment will be <code>512, 513, 514, 515, ..., 1022, 1023</code>.</dd></dl>
@@ -1201,7 +1201,7 @@ template&lt;typename ScanOp , typename BlockPrefixCallbackOp &gt; </div>
 <div class="line">        <span class="comment">// Collectively compute the block-wide exclusive prefix max scan</span></div>
 <div class="line">        <a class="code" href="classcub_1_1_block_scan.html#a5133f76e261ce0b33d381e8be747966c" title="Collective constructor using a private static allocation of shared memory as temporary storage...">BlockScan</a>(temp_storage).ExclusiveScan(</div>
 <div class="line">            thread_data, thread_data, INT_MIN, <a class="code" href="structcub_1_1_max.html" title="Default max functor. ">cub::Max</a>(), prefix_op);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Store scanned items to output segment</span></div>
 <div class="line">        d_data[block_offset] = thread_data;</div>
@@ -1532,16 +1532,16 @@ template&lt;int ITEMS_PER_THREAD, typename ScanOp , typename BlockPrefixCallback
 <div class="line">        <span class="comment">// Load a segment of consecutive items that are blocked across threads</span></div>
 <div class="line">        <span class="keywordtype">int</span> thread_data[4];</div>
 <div class="line">        BlockLoad(temp_storage.load).Load(d_data + block_offset, thread_data);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Collectively compute the block-wide exclusive prefix max scan</span></div>
 <div class="line">        <a class="code" href="classcub_1_1_block_scan.html#a5133f76e261ce0b33d381e8be747966c" title="Collective constructor using a private static allocation of shared memory as temporary storage...">BlockScan</a>(temp_storage.scan).ExclusiveScan(</div>
 <div class="line">            thread_data, thread_data, INT_MIN, <a class="code" href="structcub_1_1_max.html" title="Default max functor. ">cub::Max</a>(), prefix_op);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Store scanned items to output segment</span></div>
 <div class="line">        BlockStore(temp_storage.store).Store(d_data + block_offset, thread_data);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line">    }</div>
 </div><!-- fragment --> </dd></dl>
 <dl class="section user"><dt></dt><dd>Suppose the input <code>d_data</code> is <code>0, -1, 2, -3, 4, -5, ...</code>. The corresponding output for the first segment will be <code>INT_MIN, 0, 0, 2, 2, 4, ..., 508, 510</code>. The output for the second segment will be <code>510, 512, 512, 514, 514, 516, ..., 1020, 1022</code>.</dd></dl>
@@ -1809,7 +1809,7 @@ template&lt;typename BlockPrefixCallbackOp &gt; </div>
 <div class="line">        <span class="comment">// Collectively compute the block-wide inclusive prefix sum</span></div>
 <div class="line">        <a class="code" href="classcub_1_1_block_scan.html#a5133f76e261ce0b33d381e8be747966c" title="Collective constructor using a private static allocation of shared memory as temporary storage...">BlockScan</a>(temp_storage).InclusiveSum(</div>
 <div class="line">            thread_data, thread_data, prefix_op);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Store scanned items to output segment</span></div>
 <div class="line">        d_data[block_offset] = thread_data;</div>
@@ -2100,16 +2100,16 @@ template&lt;int ITEMS_PER_THREAD, typename BlockPrefixCallbackOp &gt; </div>
 <div class="line">        <span class="comment">// Load a segment of consecutive items that are blocked across threads</span></div>
 <div class="line">        <span class="keywordtype">int</span> thread_data[4];</div>
 <div class="line">        BlockLoad(temp_storage.load).Load(d_data + block_offset, thread_data);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Collectively compute the block-wide inclusive prefix sum</span></div>
 <div class="line">        <a class="code" href="classcub_1_1_block_scan.html#a5133f76e261ce0b33d381e8be747966c" title="Collective constructor using a private static allocation of shared memory as temporary storage...">BlockScan</a>(temp_storage.scan).IncluisveSum(</div>
 <div class="line">            thread_data, thread_data, prefix_op);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Store scanned items to output segment</span></div>
 <div class="line">        BlockStore(temp_storage.store).Store(d_data + block_offset, thread_data);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line">    }</div>
 </div><!-- fragment --> </dd></dl>
 <dl class="section user"><dt></dt><dd>Suppose the input <code>d_data</code> is <code>1, 1, 1, 1, 1, 1, 1, 1, ...</code>. The corresponding output for the first segment will be <code>1, 2, 3, 4, ..., 511, 512</code>. The output for the second segment will be <code>513, 514, 515, 516, ..., 1023, 1024</code>.</dd></dl>
@@ -2414,7 +2414,7 @@ template&lt;typename ScanOp , typename BlockPrefixCallbackOp &gt; </div>
 <div class="line">        <span class="comment">// Collectively compute the block-wide inclusive prefix max scan</span></div>
 <div class="line">        <a class="code" href="classcub_1_1_block_scan.html#a5133f76e261ce0b33d381e8be747966c" title="Collective constructor using a private static allocation of shared memory as temporary storage...">BlockScan</a>(temp_storage).InclusiveScan(</div>
 <div class="line">            thread_data, thread_data, <a class="code" href="structcub_1_1_max.html" title="Default max functor. ">cub::Max</a>(), prefix_op);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Store scanned items to output segment</span></div>
 <div class="line">        d_data[block_offset] = thread_data;</div>
@@ -2731,16 +2731,16 @@ template&lt;int ITEMS_PER_THREAD, typename ScanOp , typename BlockPrefixCallback
 <div class="line">        <span class="comment">// Load a segment of consecutive items that are blocked across threads</span></div>
 <div class="line">        <span class="keywordtype">int</span> thread_data[4];</div>
 <div class="line">        BlockLoad(temp_storage.load).Load(d_data + block_offset, thread_data);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Collectively compute the block-wide inclusive prefix max scan</span></div>
 <div class="line">        <a class="code" href="classcub_1_1_block_scan.html#a5133f76e261ce0b33d381e8be747966c" title="Collective constructor using a private static allocation of shared memory as temporary storage...">BlockScan</a>(temp_storage.scan).InclusiveScan(</div>
 <div class="line">            thread_data, thread_data, <a class="code" href="structcub_1_1_max.html" title="Default max functor. ">cub::Max</a>(), prefix_op);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Store scanned items to output segment</span></div>
 <div class="line">        BlockStore(temp_storage.store).Store(d_data + block_offset, thread_data);</div>
-<div class="line">        __syncthreads();</div>
+<div class="line">        CTA_SYNC();</div>
 <div class="line">    }</div>
 </div><!-- fragment --> </dd></dl>
 <dl class="section user"><dt></dt><dd>Suppose the input <code>d_data</code> is <code>0, -1, 2, -3, 4, -5, ...</code>. The corresponding output for the first segment will be <code>0, 0, 2, 2, 4, 4, ..., 510, 510</code>. The output for the second segment will be <code>512, 512, 514, 514, 516, 516, ..., 1022, 1022</code>.</dd></dl>
@@ -2773,7 +2773,7 @@ template&lt;int ITEMS_PER_THREAD, typename ScanOp , typename BlockPrefixCallback
 <!-- HTML footer for doxygen 1.8.3.1-->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 6 2016 13:22:01 for CUB by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jun 7 2017 13:51:16 for CUB by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 <br>

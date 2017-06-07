@@ -62,7 +62,7 @@
 
 <a href="download_cub.html"><img src="download-icon.png" style="position:relative; bottom:-10px; border:0px;"/></a>
 &nbsp;&nbsp;
-<a href="download_cub.html"><em><b>Download CUB v1.6.4</b></em></a>
+<a href="download_cub.html"><em><b>Download CUB v1.7.0</b></em></a>
 
 </td><td>
 
@@ -525,6 +525,20 @@ like access to such things.)
 The following table enumerates prior feature releases as well as update versions 
 for the current feature release.
 <table>
+
+<tr><td style="white-space: nowrap; vertical-align:text-top;">
+06/07/2017<br>
+[<b>CUB v1.7.0</b>](download_cub.html)
+</td><td style="vertical-align:text-top;">
+  - New Features: 
+    - Compatible with CUDA9 and SM7.x (Volta) independent thread scheduling 
+    - API change: remove cub::WarpAll() and cub::WarpAny().  These functions served to 
+      emulate __all and __any functionality for SM1.x devices, which did not have those 
+      operations.  However, the SM1.x devices are now deprecated in CUDA, and the 
+      interfaces of the these two functions are now lacking the lane-mask needed 
+      for collectives to run on Volta SMs having independent thread scheduling. 
+  - See the [change-log](CHANGE_LOG.TXT) for further details, including bug-fixes
+</td></tr>
 
 <tr><td style="white-space: nowrap; vertical-align:text-top;">
 12/06/2016<br>
